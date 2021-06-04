@@ -4,10 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Test webmap</title>
+    <link rel="preload" href="lib/leaflet.css" as="style">
+    <link rel="preload" href="lib/leaflet.js" as="script">
+    <link rel="preload" href="src/app.js" as="script">
     <link rel="stylesheet" href="lib/leaflet.css">
+    
     <link rel="stylesheet" href="lib/css/bootstrap.css">
-    <script src="lib/leaflet.js"></script>
+    
+    <script defer src="lib/leaflet.js"></script>
     <script src="lib/jquery-3.6.0.js"></script>
+    <script defer src="src/app.js"></script>
     <style>
         #mapdiv {
             height: 100vh;
