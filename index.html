@@ -28,14 +28,19 @@
 
         <div id="mapdiv" class="col-md-9">
             <script>
-                function metConditions(feature) {
-                    return (feature.properties.earthwork_length_m > 700);
+                const conditions = {
+                    road: (x) => x === "M6",
+                    earthwork_length_m: (x) => x > 400,
+                }
+                function meetsAllConditions(feature) {
+                    return Object.keys(conditions)
+                        .every(key => conditions[key](feature.properties[key]));
                 }
 
                 const geoData = fetch('data/NWinspectionreqWGS84.geojson')
                     .then(res => res.json())
                     .then(data => {
-                        let filtered = data.features.filter(metConditions);
+                        let filtered = data.features.filter(meetsAllConditions);
                         document.getElementById('data-points').innerHTML = filtered.length;
                         return data;
                     });
@@ -51,7 +56,7 @@
                         return props.earthwork_type + " " + props.earthwork_length_m + "m";
                     }
 
-                    geoData.then(data => L.geoJSON(data, { filter: metConditions })
+                    geoData.then(data => L.geoJSON(data, { filter: meetsAllConditions })
                         .addTo(mymap)
                         .bindPopup(description))
 
