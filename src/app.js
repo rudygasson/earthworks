@@ -1,6 +1,12 @@
+document.onreadystatechange = function () {
+    if (document.readyState === 'complete') {
+        initMap();
+    }
+}
+
 const conditions = {
-    // road: (x) => x === "M6",
-    earthwork_length_m: (x) => x > 0,
+    road: (x) => x === "M6",
+    earthwork_length_m: (x) => x > 300,
 }
 function meetsAllConditions(feature) {
     return Object.keys(conditions)
@@ -15,7 +21,7 @@ const geoData = fetch('data/NWinspectionreqWGS84.geojson')
         return data;
     });
 
-(function initApp() {
+function initMap() {
     let mrkCurrentLocation;
     const mymap = L.map('mapdiv', { center: [52.561928, -1.464854], zoom: 7 });
     const lyrOSM = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png');
@@ -34,16 +40,20 @@ const geoData = fetch('data/NWinspectionreqWGS84.geojson')
     popCentroid.setLatLng([52.561928, -1.464854]);
     popCentroid.setContent("<h2>Centre of England</h2>");
 
-    // mymap.on('contextmenu', function (e) {
-    //     var dtCurrentTime = new Date();
-    //     L.marker(e.latlng).addTo(mymap).bindPopup(e.latlng.toString() + "<br>" + dtCurrentTime.toString());
-    // });
-    mymap.on('keypress', function (e) {
+    mymap.doubleClickZoom.disable();
+
+    mymap.on('dblclick', (e) => {
+        var dtCurrentTime = new Date();
+        L.marker(e.latlng).addTo(mymap).bindPopup(e.latlng.toString() + "<br>" + dtCurrentTime.toString());
+    });
+
+    mymap.on('keypress', (e) => {
         if (e.originalEvent.key == "l") {
             mymap.locate();
         }
     });
-    mymap.on('locationfound', function (e) {
+
+    mymap.on('locationfound', (e) => {
         console.log(e);
         if (mrkCurrentLocation) {
             mrkCurrentLocation.remove();
@@ -51,27 +61,29 @@ const geoData = fetch('data/NWinspectionreqWGS84.geojson')
         mrkCurrentLocation = L.circle(e.latlng, { radius: e.accuracy / 100 }).addTo(mymap);
         mymap.setView(e.latlng, 14);
     });
-    mymap.on('locationerror', function (e) {
-        console.log(e);
-        alert("location not found");
+
+    mymap.on('locationerror', (e) => alert("location not found"));
+    
+    mymap.on('zoomend', () => document.getElementById("zoom-level")
+        .innerHTML = mymap.getZoom());
+
+    mymap.on('moveend', () => {
+        document.getElementById("map-centre")
+            .innerHTML = LatLngToArrayString(mymap.getCenter());
+        document.getElementById("zoom-level")
+            .innerHTML = mymap.getZoom()
     });
-    // mymap.on('zoomend', function () {
-    //     $("#zoom-level").html(mymap.getZoom())
-    // });
-    // mymap.on('moveend', function () {
-    //     $("#map-centre").html(LatLngToArrayString(mymap.getCenter()));
-    // });
-    // mymap.on('mousemove', function (e) {
-    //     $("#mouse-location").html(LatLngToArrayString(e.latlng));
-    // });
-    // $("#btnLocate").on("click", function (e) {
-    //     mymap.locate();
-    // });
-    // $("#btnCentroid").on("click", function (e) {
-    //     mymap.setView([52.561928, -1.464854], 7);
-    //     mymap.openPopup(popCentroid);
-    // });
+
+    mymap.on('mousemove', (e) => document.getElementById("mouse-location")
+        .innerHTML = LatLngToArrayString(e.latlng));
+
+    document.getElementById("btnLocate").onclick = () => mymap.locate();
+
+    document.getElementById("btnCentroid").onclick = () => {
+        mymap.setView([52.561928, -1.464854], 7);
+        mymap.openPopup(popCentroid);
+    };
     function LatLngToArrayString(ll) {
         return "[" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + "]";
     }
-})();
+};
