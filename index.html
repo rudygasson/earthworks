@@ -8,9 +8,8 @@
     <link rel="preload" href="src/style.css" as="style">
     <link rel="preload" href="lib/leaflet.js" as="script">
     <link rel="preload" href="src/app.js" as="script">
-    
+
     <link rel="stylesheet" href="lib/leaflet.css">
-    <link rel="stylesheet" href="lib/css/bootstrap.css">
     <link rel="stylesheet" href="src/style.css">
 
     <script defer src="lib/leaflet.js"></script>
@@ -18,18 +17,37 @@
 </head>
 
 <body>
+    <nav class="navbar">
+        <div id="map-panel">
+            <button id='btnLocate' class='side-bar__button'>Locate</button>
+            <button id='btnCentroid' class='side-bar__button'>Reset Zoom</button>
+            <div id="data-list">
+                <table class="measures">
+                    <tr>
+                        <td>Zoom level:</td>
+                        <td id='zoom-level'></td>
+                    </tr>
+                    <tr>
+                        <td>Map centre:</td>
+                        <td id='map-centre'></td>
+                    </tr>
+                    <tr>
+                        <td>Mouse:</td>
+                        <td id='mouse-location'></td>
+                    </tr>
+                    <tr>
+                        <td>Data Points:</td>
+                        <td id='data-points'></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </nav>
     <div class="main">
-        <div id="side-bar" class="col-md-3">
-            <button id='btnLocate' class='btn btn-primary btn-block'>Locate</button>
-            <button id='btnCentroid' class='btn btn-primary btn-block'>Zoom to Centre of England</button>
-            <h6>Zoom level: <span id='zoom-level'></span></h6>
-            <h6>Map centre: <span id='map-centre'></span></h6>
-            <h6>Mouse location: <span id='mouse-location'></span></h6>
-            <h6>Displayed Data Points: <span id='data-points'></span></h6>
+
+        <div id="mapdiv">
         </div>
 
-        <div id="mapdiv" class="col-md-9">
-        </div>
     </div>
 </body>
 
