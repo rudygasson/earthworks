@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "snowpack dev",
+    "build": "snowpack build"
+  },
+  "devDependencies": {
+    "snowpack": "^3.5.7"
+  },
+  "dependencies": {
+    "leaflet": "^1.7.1",
+    "proj4leaflet": "^1.0.2"
+  }
+}

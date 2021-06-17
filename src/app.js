@@ -1,27 +1,36 @@
+// import * as L from "leaflet";
+import proj4 from "proj4";
+import "proj4leaflet";
+
+const GEOJSON_URL = 'data/A56_EPSG27700.json'
+const CONDITIONS = {
+    road: (x) => x === "A56",
+    earthwork_length_m: (x) => x > 0
+}
+
 document.onreadystatechange = function () {
     if (document.readyState === 'complete') {
         initMap();
     }
 }
 
-const conditions = {
-    road: (x) => x === "M6",
-    earthwork_length_m: (x) => x > 300,
-}
-function meetsAllConditions(feature) {
-    return Object.keys(conditions)
+function allConditions(conditions) {
+    return (feature) => Object.keys(conditions)
         .every(key => conditions[key](feature.properties[key]));
 }
 
-const geoData = fetch('data/NWinspectionreqWGS84.geojson')
-    .then(res => res.json())
-    .then(data => {
-        let filtered = data.features.filter(meetsAllConditions);
-        document.getElementById('data-points').innerHTML = filtered.length;
-        return data;
-    });
+async function getGeoData(geoJsonUrl) {
+    return fetch(geoJsonUrl)
+        .then(res => res.json())
+        .then(data => {
+            let filtered = data.features.filter(allConditions(CONDITIONS));
+            document.getElementById('data-points').innerHTML = filtered.length;
+            console.log(data);
+            return data;
+        })
+}
 
-function initMap() {
+async function initMap() {
     let mrkCurrentLocation;
     const mymap = L.map('mapdiv', { center: [52.561928, -1.464854], zoom: 7 });
     const lyrOSM = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png');
@@ -32,9 +41,14 @@ function initMap() {
         return props.earthwork_type + " " + props.earthwork_length_m + "m";
     }
 
-    geoData.then(data => L.geoJSON(data, { filter: meetsAllConditions })
+    proj4.defs(
+        "urn:ogc:def:crs:EPSG::27700",
+        "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs"
+    );
+
+    L.Proj.geoJson(await getGeoData(GEOJSON_URL), { filter: allConditions(CONDITIONS) })
         .addTo(mymap)
-        .bindPopup(description))
+        .bindPopup(description);
 
     const popCentroid = L.popup();
     popCentroid.setLatLng([52.561928, -1.464854]);
@@ -63,19 +77,15 @@ function initMap() {
     });
 
     mymap.on('locationerror', (e) => alert("location not found"));
-    
-    mymap.on('zoomend', () => document.getElementById("zoom-level")
-        .innerHTML = mymap.getZoom());
 
-    mymap.on('moveend', () => {
+    mymap.on('mousemove', (e) => {
+        document.getElementById("mouse-location")
+            .innerHTML = LatLngToArrayString(e.latlng);
         document.getElementById("map-centre")
             .innerHTML = LatLngToArrayString(mymap.getCenter());
         document.getElementById("zoom-level")
-            .innerHTML = mymap.getZoom()
+            .innerHTML = mymap.getZoom();
     });
-
-    mymap.on('mousemove', (e) => document.getElementById("mouse-location")
-        .innerHTML = LatLngToArrayString(e.latlng));
 
     document.getElementById("btnLocate").onclick = () => mymap.locate();
 
