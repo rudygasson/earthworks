@@ -54,7 +54,7 @@ async function initMap() {
         let geo = layer.feature.geometry;
         let props = layer.feature.properties;
         return `${props.earthwork_length_m}m ${props.earthwork_type}</br> 
-        at [${geo.coordinates}]`;
+        at [${geo.coordinates[0]}, ${geo.coordinates[1]}]`;
     }
 
     let geoData = await getGeoData(GEOJSON_URL);
@@ -66,18 +66,18 @@ async function initMap() {
         }
     ).bindPopup(description);
 
-    console.log(dataLayer);
     mymap.addLayer(dataLayer);
 
     const popCentroid = L.popup();
     popCentroid.setLatLng(centreOfEngland);
-    popCentroid.setContent("<h2>Centre of England</h2> at </br>" + wgsToBgs(centreOfEngland));
+    popCentroid.setContent("<h2>Centre of England</h2>" + LatLngToENString(popCentroid.getLatLng()));
 
     mymap.doubleClickZoom.disable();
 
     mymap.on('dblclick', (e) => {
-        var dtCurrentTime = new Date();
-        L.marker(e.latlng).addTo(mymap).bindPopup(e.latlng.toString() + "<br>" + dtCurrentTime.toString());
+        L.marker(e.latlng)
+            .addTo(mymap)
+            .bindPopup(`${LatLngToENString(e.latlng)}<br>${new Date()}`);
     });
 
     mymap.on('keypress', (e) => {
@@ -99,9 +99,9 @@ async function initMap() {
 
     mymap.on('mousemove', (e) => {
         document.getElementById("mouse-location")
-            .innerText = LatLngToArrayString(e.latlng);
+            .innerText = LatLngToENString(e.latlng);
         document.getElementById("map-centre")
-            .innerText = LatLngToArrayString(mymap.getCenter());
+            .innerText = LatLngToENString(mymap.getCenter());
         document.getElementById("zoom-level")
             .innerText = mymap.getZoom();
     });
@@ -111,7 +111,8 @@ async function initMap() {
     document.getElementById("btnCentroid").onclick = () => {
         mymap.openPopup(popCentroid).setView(centreOfEngland, 7);
     };
-    function LatLngToArrayString(ll) {
-        return "[" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + "]";
+    function LatLngToENString({ lat, lng }) {
+        let [easting, northing] = wgsToBgs([lat, lng]);
+        return `[${easting}, ${northing}]`;
     }
 };
