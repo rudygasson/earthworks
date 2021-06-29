@@ -6,11 +6,13 @@ const CONDITIONS = {
     road: (x) => x === "A56",
     earthwork_length_m: (x) => x > 0
 }
+const UK_GRID_ID = 'urn:ogc:def:crs:EPSG::27700';
+const UK_GRID_TRANSFORM = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs';
+const WORLD_GRID_ID = 'WGS84';
+const CENTRE_OF_ENGLAND = [52.561928, -1.464854];
+const DEFAULT_ZOOM = 7;
 
-proj4.defs(
-    "urn:ogc:def:crs:EPSG::27700",
-    "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs"
-);
+proj4.defs(UK_GRID_ID, UK_GRID_TRANSFORM);
 
 document.onreadystatechange = function () {
     if (document.readyState === 'complete') {
@@ -23,13 +25,13 @@ function allConditions(conditions) {
         .every(key => conditions[key](feature.properties[key]));
 }
 
-function bgsToWgs(coords) {
-    let converted = proj4("urn:ogc:def:crs:EPSG::27700", "WGS84", coords);
+function ukToWorld(coords) {
+    let converted = proj4(UK_GRID_ID, WORLD_GRID_ID, coords);
     return L.latLng(converted[1], converted[0]);
 }
 
-function wgsToBgs(coords) {
-    let converted = proj4("WGS84", "urn:ogc:def:crs:EPSG::27700", [coords[1], coords[0]]);
+function worldToUk(coords) {
+    let converted = proj4(WORLD_GRID_ID, UK_GRID_ID, [coords[1], coords[0]]);
     return [Math.round(converted[0]), Math.round(converted[1])];
 }
 
@@ -44,9 +46,8 @@ async function getGeoData(geoJsonUrl) {
 }
 
 async function initMap() {
-    let centreOfEngland = [52.561928, -1.464854];
     let mrkCurrentLocation;
-    const mymap = L.map('mapdiv', { center: centreOfEngland, zoom: 7 });
+    const mymap = L.map('mapdiv', { center: CENTRE_OF_ENGLAND, zoom: DEFAULT_ZOOM });
     const lyrOSM = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png');
     mymap.addLayer(lyrOSM);
 
@@ -62,14 +63,14 @@ async function initMap() {
     const dataLayer = L.geoJson(geoData,
         {
             filter: allConditions(CONDITIONS),
-            coordsToLatLng: bgsToWgs
+            coordsToLatLng: ukToWorld
         }
     ).bindPopup(description);
 
     mymap.addLayer(dataLayer);
 
     const popCentroid = L.popup();
-    popCentroid.setLatLng(centreOfEngland);
+    popCentroid.setLatLng(CENTRE_OF_ENGLAND);
     popCentroid.setContent("<h2>Centre of England</h2>" + LatLngToENString(popCentroid.getLatLng()));
 
     mymap.doubleClickZoom.disable();
@@ -109,10 +110,10 @@ async function initMap() {
     document.getElementById("btnLocate").onclick = () => mymap.locate();
 
     document.getElementById("btnCentroid").onclick = () => {
-        mymap.openPopup(popCentroid).setView(centreOfEngland, 7);
+        mymap.openPopup(popCentroid).setView(CENTRE_OF_ENGLAND, DEFAULT_ZOOM);
     };
     function LatLngToENString({ lat, lng }) {
-        let [easting, northing] = wgsToBgs([lat, lng]);
+        let [easting, northing] = worldToUk([lat, lng]);
         return `[${easting}, ${northing}]`;
     }
 };
