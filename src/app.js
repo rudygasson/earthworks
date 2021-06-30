@@ -35,6 +35,11 @@ function worldToUk(coords) {
     return [Math.round(converted[0]), Math.round(converted[1])];
 }
 
+function LatLngToENString({ lat, lng }) {
+    let [easting, northing] = worldToUk([lat, lng]);
+    return `[${easting}, ${northing}]`;
+}
+
 async function getGeoData(geoJsonUrl) {
     return fetch(geoJsonUrl)
         .then(res => res.json())
@@ -45,11 +50,21 @@ async function getGeoData(geoJsonUrl) {
         });
 }
 
+function updateMapLegend(position, map) {
+    document.getElementById("mouse-location")
+        .innerText = LatLngToENString(position);
+    document.getElementById("map-centre")
+        .innerText = LatLngToENString(map.getCenter());
+    document.getElementById("zoom-level")
+        .innerText = map.getZoom();
+}
+
 async function initMap() {
     let mrkCurrentLocation;
     const mymap = L.map('mapdiv', { center: CENTRE_OF_ENGLAND, zoom: DEFAULT_ZOOM });
     const lyrOSM = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png');
     mymap.addLayer(lyrOSM);
+    updateMapLegend(mymap.getCenter(), mymap);
 
     function description(layer) {
         let geo = layer.feature.geometry;
@@ -60,12 +75,14 @@ async function initMap() {
 
     let geoData = await getGeoData(GEOJSON_URL);
 
-    const dataLayer = L.geoJson(geoData,
+    const dataLayer = L.geoJson([],
         {
             filter: allConditions(CONDITIONS),
             coordsToLatLng: ukToWorld
         }
-    ).bindPopup(description);
+    )
+
+    dataLayer.addData(geoData).bindPopup(description);
 
     mymap.addLayer(dataLayer);
 
@@ -98,22 +115,12 @@ async function initMap() {
 
     mymap.on('locationerror', (e) => alert("location not found"));
 
-    mymap.on('mousemove', (e) => {
-        document.getElementById("mouse-location")
-            .innerText = LatLngToENString(e.latlng);
-        document.getElementById("map-centre")
-            .innerText = LatLngToENString(mymap.getCenter());
-        document.getElementById("zoom-level")
-            .innerText = mymap.getZoom();
-    });
+    mymap.on('mousemove', (e) => updateMapLegend(e.latlng, mymap));
 
     document.getElementById("btnLocate").onclick = () => mymap.locate();
 
     document.getElementById("btnCentroid").onclick = () => {
         mymap.openPopup(popCentroid).setView(CENTRE_OF_ENGLAND, DEFAULT_ZOOM);
+        updateMapLegend(mymap.getCenter(), mymap);
     };
-    function LatLngToENString({ lat, lng }) {
-        let [easting, northing] = worldToUk([lat, lng]);
-        return `[${easting}, ${northing}]`;
-    }
 };
