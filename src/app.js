@@ -85,9 +85,13 @@ async function initMap() {
         at [${geo.coordinates[0]}, ${geo.coordinates[1]}]`;
   }
 
-  let resource = `/earthworks/inspectionreq/?area_dbfo=${area}`;
-  let geoData = await getAPIData(resource);
-  const dataLayer = L.geoJSON(geoData, { coordsToLatLng: ukToWorld });
+  async function updateArea(area) {
+    let resource = `/earthworks/inspectionreq/?area_dbfo=${area}`;
+    let geoData = await getAPIData(resource);
+    const dataLayer = L.geoJSON(geoData, { coordsToLatLng: ukToWorld });
+    dataLayer.addData(geoData).bindPopup(description);
+    mymap.addLayer(dataLayer);
+  }
   //   const dataLayer = L.geoJson([], {
   //     filter: allConditions(CONDITIONS),
   //     coordsToLatLng: ukToWorld,
@@ -97,11 +101,9 @@ async function initMap() {
   dropdown.addEventListener("click", function () {
     area = dropdown.options[dropdown.selectedIndex].value;
     console.log(area);
+    updateArea(area);
   });
 
-  dataLayer.addData(geoData).bindPopup(description);
-
-  mymap.addLayer(dataLayer);
   const popCentroid = L.popup();
   popCentroid.setLatLng(CENTRE_OF_ENGLAND);
   popCentroid.setContent(
