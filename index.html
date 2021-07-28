@@ -1,51 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Earthworks Web Map</title>
-    <link rel="preload" href="lib/leaflet.css" as="style">
-    <link rel="preload" href="src/style.css" as="style">
-    
-    <link rel="stylesheet" href="lib/leaflet.css">
-    <link rel="stylesheet" href="src/style.css">
+    <link rel="preload" href="lib/leaflet.css" as="style" />
+    <link rel="preload" href="src/style.css" as="style" />
+
+    <link rel="stylesheet" href="lib/leaflet.css" />
+    <link rel="stylesheet" href="src/style.css" />
 
     <script defer type="module" src="src/app.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <nav class="navbar">
-        <div id="map-panel">
-            <button id='btnLocate' class='side-bar__button'>Locate</button>
-            <button id='btnCentroid' class='side-bar__button'>Reset Zoom</button>
-            <div id="data-list">
-                <table class="measures">
-                    <tr>
-                        <td>Zoom level:</td>
-                        <td id='zoom-level'></td>
-                    </tr>
-                    <tr>
-                        <td>Map centre:</td>
-                        <td id='map-centre'></td>
-                    </tr>
-                    <tr>
-                        <td>Mouse:</td>
-                        <td id='mouse-location'></td>
-                    </tr>
-                    <tr>
-                        <td>Data Points:</td>
-                        <td id='data-points'></td>
-                    </tr>
-                </table>
-            </div>
+      <div id="map-panel">
+        <select id="area_selection">
+          <option value="10">Area 10</option>
+          <option value="13">Area 13</option>
+        </select>
+        <button id="btnLocate" class="side-bar__button">Locate</button>
+        <button id="btnCentroid" class="side-bar__button">Reset Zoom</button>
+        <div id="data-list">
+          <table class="measures">
+            <tr>
+              <td>Zoom level:</td>
+              <td id="zoom-level"></td>
+            </tr>
+            <tr>
+              <td>Map centre:</td>
+              <td id="map-centre"></td>
+            </tr>
+            <tr>
+              <td>Mouse:</td>
+              <td id="mouse-location"></td>
+            </tr>
+            <tr>
+              <td>Data Points:</td>
+              <td id="data-points"></td>
+            </tr>
+          </table>
         </div>
+      </div>
     </nav>
     <div class="main">
-
-        <div id="mapdiv">
-        </div>
-
+      <div id="mapdiv"></div>
     </div>
-</body>
-
+  </body>
 </html>
