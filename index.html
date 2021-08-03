@@ -6,7 +6,7 @@
     <title>Earthworks Web Map</title>
     <link rel="preload" href="lib/leaflet.css" as="style">
     <link rel="preload" href="src/style.css" as="style">
-    
+
     <link rel="stylesheet" href="lib/leaflet.css">
     <link rel="stylesheet" href="src/style.css">
 
@@ -14,37 +14,49 @@
 </head>
 
 <body>
-    <nav class="navbar">
-        <div id="map-panel">
-            <button id='btnLocate' class='side-bar__button'>Locate</button>
-            <button id='btnCentroid' class='side-bar__button'>Reset Zoom</button>
-            <div id="data-list">
-                <table class="measures">
-                    <tr>
-                        <td>Zoom level:</td>
-                        <td id='zoom-level'></td>
-                    </tr>
-                    <tr>
-                        <td>Map centre:</td>
-                        <td id='map-centre'></td>
-                    </tr>
-                    <tr>
-                        <td>Mouse:</td>
-                        <td id='mouse-location'></td>
-                    </tr>
-                    <tr>
-                        <td>Data Points:</td>
-                        <td id='data-points'></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </nav>
     <div class="main">
-
         <div id="mapdiv">
         </div>
-
+        <div id="map-info">
+            <div id="map-controls">
+                <button id='btnLocate' class='map-info__button'>Locate</button>
+                <button id='btnCentroid' class='map-info__button'>Reset Zoom</button>
+            </div>
+            <table class="measures">
+                <tr>
+                    <td>Zoom level:</td>
+                    <td id='zoom-level'></td>
+                </tr>
+                <tr>
+                    <td>Map centre:</td>
+                    <td id='map-centre'></td>
+                </tr>
+                <tr>
+                    <td>Mouse:</td>
+                    <td id='mouse-location'></td>
+                </tr>
+            </table>
+        </div>
+        <div id="inspection-info">
+            <h2>Inspections</h2>
+            <table class="area-table">
+                <tr>
+                    <th>Area</th>
+                    <th>due</th>
+                    <th>overdue</th>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="area_selection">
+                            <option value="10">10</option>
+                            <option value="13">13</option>
+                        </select>
+                    </td>
+                    <td class="due">0</td>
+                    <td class="overdue">0</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </body>
 
