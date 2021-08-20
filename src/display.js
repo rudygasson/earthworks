@@ -30,7 +30,7 @@ export function updateMapInfo(map, position) {
 function description(layer) {
     let geo = layer.feature.geometry;
     let props = layer.feature.properties;
-    return `${props.earthwork_length_m}m ${props.earthwork_type}</br> 
+    return `${props.earthwork_length_m}m ${props.earthwork_type}</br>
     at [${geo.coordinates[0]}, ${geo.coordinates[1]}]`;
 }
 

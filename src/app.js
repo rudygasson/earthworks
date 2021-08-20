@@ -3,7 +3,7 @@ import { initMap, createAllAreaLayers, updateMapInfo } from "./display";
 import { initActions } from "./actions";
 import { assert } from "./utils";
 
-const GEOJSON_URL = 'data/A56_EPSG27700.json'
+const GEOJSON_URL = new URL('http://localhost:5000/earthworks');
 const activeLayerGroup = L.layerGroup([]);
 
 document.onreadystatechange = async function () {
@@ -19,7 +19,8 @@ document.onreadystatechange = async function () {
 }
 
 async function getGeoData(geoJsonUrl, conditions = {}) {
-    assert(typeof geoJsonUrl === "string" && geoJsonUrl.match(/.json$/), geoJsonUrl);
+    assert(typeof geoJsonUrl === "object", geoJsonUrl);
+    assert(geoJsonUrl.pathname === "/earthworks", geoJsonUrl);
     return fetch(geoJsonUrl)
         .then(res => res.json())
         .then(data => {
