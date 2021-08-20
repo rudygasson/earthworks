@@ -1,6 +1,7 @@
 import { allConditions } from "./filter";
 import { initMap, createAllAreaLayers, updateMapInfo } from "./display";
 import { initActions } from "./actions";
+import { assert } from "./utils";
 
 const GEOJSON_URL = 'data/A56_EPSG27700.json'
 const activeLayerGroup = L.layerGroup([]);
@@ -8,6 +9,7 @@ const activeLayerGroup = L.layerGroup([]);
 document.onreadystatechange = async function () {
     if (document.readyState === 'complete') {
         let geoData = await getGeoData(GEOJSON_URL);
+        assert(geoData !== {}, geoData);
         let inspectionMap = initMap();
         let areaLayers = createAllAreaLayers(geoData, [10, 13]);
         updateMapInfo(inspectionMap, inspectionMap.getCenter());
@@ -17,9 +19,11 @@ document.onreadystatechange = async function () {
 }
 
 async function getGeoData(geoJsonUrl, conditions = {}) {
+    assert(typeof geoJsonUrl === "string" && geoJsonUrl.match(/.json$/), geoJsonUrl);
     return fetch(geoJsonUrl)
         .then(res => res.json())
         .then(data => {
+            assert(data.features !== undefined && data.features !== [], data);
             let filtered = data.features.filter(allConditions(conditions));
             document.getElementsByClassName('due')[0].innerText = filtered.length;
             return filtered;

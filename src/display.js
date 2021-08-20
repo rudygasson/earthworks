@@ -1,6 +1,8 @@
 import "leaflet";
 import { ukToWorld, latLngToENString } from "./grid";
 import { allConditions } from "./filter";
+import { assert } from "./utils";
+
 
 const OSM_TILE_LAYER = "http://{s}.tile.osm.org/{z}/{x}/{y}.png";
 const OSM_ATTRIBUTION = `© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`;
@@ -16,6 +18,7 @@ export function initMap() {
 };
 
 export function updateMapInfo(map, position) {
+    assert(position.lat !== undefined && position.lng !== undefined, position)
     document.getElementById("mouse-location")
         .innerText = latLngToENString(position);
     document.getElementById("map-centre")
@@ -37,6 +40,7 @@ export function createAllAreaLayers(data, areaNumbers) {
     return areaLayers;
 
     function createAreaLayer(area) {
+        assert(typeof area === "number", area);
         return L.geoJson(data,
             {
                 filter: allConditions({ area_dbfo: (x) => x === area }),
