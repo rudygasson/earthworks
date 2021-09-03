@@ -18,7 +18,7 @@ def valid_columns(table_name: str, cursor) -> list:
 
 
 def query(args, flag):
-    with sqlite3.connect('../data/earthworks.db') as dbcon:
+    with sqlite3.connect('data/earthworks.db') as dbcon:
         dbcon.row_factory = sqlite3.Row
         c = dbcon.cursor()
         sql_filter = ""

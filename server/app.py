@@ -11,7 +11,7 @@ Compress(app)
 
 @app.route('/')
 def index():
-    return redirect('http://localhost:8080')
+    return redirect('/earthworks?road=M6')
 
 
 @app.errorhandler(404)
