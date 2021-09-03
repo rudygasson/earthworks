@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, render_template, abort, redirect
 from flask_compress import Compress
 from flask_cors import CORS
 from geojson import Feature, LineString, FeatureCollection
+from datetime import date
 
 app = Flask(__name__)
 CORS(app)
@@ -21,7 +22,7 @@ def page_not_found(e):
 
 @app.route('/earthworks/<int:number>')
 def single(number):
-    output = query({"earthwork_number": number}, "all")
+    output = query({"earthwork_number": number}, opt="all")
 
     if type(output) is not list:
         abort(404)
@@ -33,15 +34,15 @@ def single(number):
             geometry=LineString([
                 (props['start_easting'], props['start_northing']),
                 (props['end_easting'], props['end_northing'])
-                ]),
-            properties=props)
+                ]), properties=props
+            )
 
     return jsonify(feature)
 
 
 @app.route('/earthworks')
 def search():
-    output = query(request.args, "all")
+    output = query(request.args, opt="min", date=str(date.today()))
 
     if type(output) is not list:
         abort(404)
@@ -51,15 +52,23 @@ def search():
         {col: rows[col] for col in rows.keys()} for rows in output
     ]
 
+    def remove_coords(entry):
+        return "start" not in entry[0] and "end" not in entry[0]
+
     # Create GEOJSON feature list according to standard
     features = FeatureCollection([
         Feature(
-            geometry=LineString([
-                (props['start_easting'], props['start_northing']),
-                (props['end_easting'], props['end_northing'])
-                ]),
-            properties=props) for props in properties
-        ])
+            geometry=LineString(
+                [
+                    (props['start_easting'], props['start_northing']),
+                    (props['end_easting'], props['end_northing'])
+                ]
+            ),
+            properties=dict(
+                filter(remove_coords, props.items())
+            )
+        ) for props in properties
+    ])
 
     # Serialize to JSON and create http response header
     return jsonify(features)
@@ -67,14 +76,14 @@ def search():
 
 @app.route('/earthworks/count')
 def count():
-    rows = query(request.args, "count")
+    rows = query(request.args, opt="count", date=str(date.today()))
     return jsonify({"count": rows[0][0]})
 
 
 @app.route('/earthworks/length')
 def length():
-    rows = query(request.args, "length")
-    return jsonify({"length": rows[0][0]})
+    rows = query(request.args, opt="length", date=str(date.today()))
+    return jsonify({"length_km": round(rows[0][0]/1000, 3)})
 
 
 if __name__ == "__main__":
