@@ -3,7 +3,6 @@ from flask import Flask, request, jsonify, render_template, abort, redirect
 from flask_compress import Compress
 from flask_cors import CORS
 from geojson import Feature, LineString, FeatureCollection
-from datetime import date
 
 app = Flask(__name__)
 CORS(app)
@@ -42,7 +41,7 @@ def single(number):
 
 @app.route('/earthworks')
 def search():
-    output = query(request.args, opt="min", date=str(date.today()))
+    output = query(request.args, opt="min")
 
     if type(output) is not list:
         abort(404)
@@ -76,14 +75,14 @@ def search():
 
 @app.route('/earthworks/count')
 def count():
-    rows = query(request.args, opt="count", date=str(date.today()))
+    rows = query(request.args, opt="count")
     return jsonify({"count": rows[0][0]})
 
 
 @app.route('/earthworks/length')
 def length():
-    rows = query(request.args, opt="length", date=str(date.today()))
-    return jsonify({"length_km": round(rows[0][0]/1000, 3)})
+    rows = query(request.args, opt="length")
+    return jsonify({"length_km": round(rows[0][0]/1000, 2)})
 
 
 if __name__ == "__main__":
