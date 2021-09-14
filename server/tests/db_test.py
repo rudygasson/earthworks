@@ -9,8 +9,8 @@ def test_get_date():
     assert sql_str == sql_expect
 
 
-def mock_get_date(field):
-    return "test"
+def mock_get_date(field: str):
+    return field
 
 
 def test_add_filter_first(monkeypatch):

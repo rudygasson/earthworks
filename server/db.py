@@ -1,6 +1,9 @@
 import sqlite3
 from flask import abort
 
+db_path = "data/earthworks.db"
+db_table_name = "earthworks_view"
+
 min_fields = """
     earthwork_number,
     start_easting,
@@ -18,29 +21,20 @@ sql_options = {
     "min": min_fields
 }
 
+valid_params = {
+    "area": "area_dbfo",
+    "road": "road",
+    "next_pi": "next_principal_inspection_date"
+}
 
-# valid_columns could also return a simple pre-defined list
-# to protect the db from unauthorized access to
-# existing but hidden columns
-
-def valid_columns(table_name: str, key: str, cursor) -> list:
-    columns_avail = cursor.execute(
-        f"pragma table_info({table_name})").fetchall()
-    valid = {
-            "area": "area_dbfo",
-            "road": "road",
-            "next_pid": "next_principal_inspection_date"
-            }
-    avail = [col[1] for col in columns_avail]
-    if key in valid and valid[key] in avail:
-        return valid[key]
-    else:
-        cursor.close()
-        abort(400)
+due_rules = {
+    "due": {"before": "2022-04-01", "after": "2021-03-31"},
+    "overdue": {"before": "2021-04-01"},
+    "good": {"after": "2022-03-31"}
+}
 
 
 # create sql commands to convert date strings
-
 def get_date(column: str):
     sql_str = ""
     # extract date from string 'MM/DD/YYYY' and create
@@ -76,36 +70,36 @@ def add_date_filter(sql="", **kwargs):
 
 
 def query(args, **kwargs):
-    with sqlite3.connect('data/earthworks.db') as dbcon:
+    with sqlite3.connect(db_path) as dbcon:
         dbcon.row_factory = sqlite3.Row
         c = dbcon.cursor()
         part = sql_options[kwargs.get('opt', None)]
 
-        sql = f"SELECT {part} FROM earthworks_view "
+        sql = f"SELECT {part} FROM {db_table_name}"
         sql_filter = ""
 
         # Collect filters and protect against SQL injection
-        print(*args)
         if len(args) > 0:
-            for n, key in enumerate(args):
-
-                column = valid_columns('earthworks_view', key, c)
+            for key in args:
+                if key not in valid_params:
+                    abort(400)
+                if key == "next_pi":
+                    sql_filter = add_date_filter(
+                        sql=sql_filter,
+                        col=valid_params[key],
+                        **due_rules[args[key]])
+                    continue
+                column = valid_params[key]
                 entry = args[key]
 
-                if ";" in str(entry):
+                if ";" in str(entry) or "'" in str(entry):
                     c.close()
                     abort(400)
 
-                if n > 0:
-                    sql_filter += " AND "
-
+                sql_filter += filter_verb(sql_filter)
                 sql_filter += column + "='" + str(entry) + "'"
-            sql += f"WHERE {sql_filter} "
-
-        add_date_filter(sql=sql, **kwargs)
-
-        print(sql)
-        c.execute(sql + ";")
+            sql += sql_filter + ";"
+        c.execute(sql)
         output = c.fetchall()
         c.close()
     return output
