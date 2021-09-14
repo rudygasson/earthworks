@@ -21,9 +21,9 @@ def page_not_found(e):
 
 @app.route('/earthworks/<int:number>')
 def single(number):
-    output = query({"earthwork_number": number}, opt="all")
+    output = query({"id": number}, opt="all")
 
-    if type(output) is not list:
+    if type(output) is not list or len(output) == 0:
         abort(404)
 
     row = output[0]

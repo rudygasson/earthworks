@@ -24,6 +24,7 @@ sql_options = {
 valid_params = {
     "area": "area_dbfo",
     "road": "road",
+    "id": "earthwork_number",
     "next_pi": "next_principal_inspection_date"
 }
 
