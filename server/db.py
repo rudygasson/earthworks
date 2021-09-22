@@ -16,9 +16,16 @@ min_fields = """
 
 sql_options = {
     "all": "*",
+    "area set": '''area_dbfo AS area,
+                count(area_dbfo) AS count,
+                round(sum(earthwork_length_m)/1000, 2) AS "length(km)"''',
     "count": "count(*)",
     "length": "sum(earthwork_length_m)",
     "min": min_fields
+}
+
+sql_groupby = {
+    "area set": "area"
 }
 
 valid_params = {
@@ -31,6 +38,7 @@ valid_params = {
 due_rules = {
     "due": {"before": "2022-04-01", "after": "2021-03-31"},
     "overdue": {"before": "2021-04-01"},
+    "alldue": {"before": "2022-04-01"},
     "good": {"after": "2022-03-31"}
 }
 
@@ -75,6 +83,7 @@ def query(args, **kwargs):
         dbcon.row_factory = sqlite3.Row
         c = dbcon.cursor()
         part = sql_options[kwargs.get('opt', None)]
+        groupby = sql_groupby[kwargs.get('opt', None)]
 
         sql = f"SELECT {part} FROM {db_table_name}"
         sql_filter = ""
@@ -85,10 +94,10 @@ def query(args, **kwargs):
                 if key not in valid_params:
                     abort(400)
                 if key == "next_pi":
-                    sql_filter = add_date_filter(
-                        sql=sql_filter,
+                    period = add_date_filter(
                         col=valid_params[key],
                         **due_rules[args[key]])
+                    sql_filter += period
                     continue
                 column = valid_params[key]
                 entry = args[key]
@@ -99,8 +108,10 @@ def query(args, **kwargs):
 
                 sql_filter += filter_verb(sql_filter)
                 sql_filter += column + "='" + str(entry) + "'"
-            sql += sql_filter + ";"
-        c.execute(sql)
+            sql += sql_filter
+        sql += " GROUP BY " + groupby if groupby else ""
+        print(sql)
+        c.execute(sql + " LIMIT 1000;")
         output = c.fetchall()
         c.close()
     return output

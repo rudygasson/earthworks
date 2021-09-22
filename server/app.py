@@ -85,5 +85,12 @@ def length():
     return jsonify({"length_km": round(rows[0][0]/1000, 2)})
 
 
+@app.route('/earthworks/areas')
+def area_list():
+    output = query(request.args, opt="area set")
+    areas = [{col: rows[col] for col in rows.keys()} for rows in output]
+    return jsonify({"areas": areas})
+
+
 if __name__ == "__main__":
     app.run(debug=True)
