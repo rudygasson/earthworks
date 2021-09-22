@@ -82,8 +82,8 @@ def query(args, **kwargs):
     with sqlite3.connect(db_path) as dbcon:
         dbcon.row_factory = sqlite3.Row
         c = dbcon.cursor()
-        part = sql_options[kwargs.get('opt', None)]
-        groupby = sql_groupby[kwargs.get('opt', None)]
+        part = sql_options.get(kwargs.get('opt', None))
+        groupby = sql_groupby.get(kwargs.get('opt', None))
 
         sql = f"SELECT {part} FROM {db_table_name}"
         sql_filter = ""
