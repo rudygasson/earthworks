@@ -56,9 +56,6 @@ export function createTable(areaData) {
         col.appendChild(overdueLength);
         row.appendChild(col);
 
-        row.addEventListener("click",
-            e => showArea(e.target.parentElement.firstChild.textContent),
-            false);
         table.appendChild(row);
     });
 }
@@ -69,31 +66,5 @@ function description(layer) {
     return `${props.earthwork_length_m}m ${props.earthwork_type}</br>
     at [${geo.coordinates[0]}, ${geo.coordinates[1]}]`;
 }
-
-export function createAllAreaLayers(data, areaNumbers) {
-    let areaLayers = {};
-    areaNumbers.map(area => areaLayers[area] = createAreaLayer(area, data));
-    return areaLayers;
-}
-
-function createAreaLayer(area, data) {
-    assert(typeof area === "number", area);
-    return L.geoJson(data,
-        {
-            filter: allConditions({ area_dbfo: (x) => x === area }),
-            coordsToLatLng: ukToWorld
-        });
-}
-
-export function showArea(areaNumber) {
-    console.warn(areaNumber);
-}
-
-// export function showArea(map, activeLayerGroup, areaLayer) {
-//     console.log(map);
-//     activeLayerGroup.clearLayers();
-//     activeLayerGroup.addLayer(areaLayer);
-//     return map.fitBounds(areaLayer.getBounds());
-// }
 
 export { CENTRE_OF_ENGLAND, DEFAULT_ZOOM }

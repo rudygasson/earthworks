@@ -1,7 +1,11 @@
-import { showArea, updateMapInfo, CENTRE_OF_ENGLAND, DEFAULT_ZOOM } from "./display";
+import { updateMapInfo, CENTRE_OF_ENGLAND, DEFAULT_ZOOM } from "./display";
 import { latLngToENString } from "./grid";
+import { getAreaLayer } from "./connection"
+
+const activeLayerGroup = L.layerGroup([]);
 
 function initActions(map) {
+    activeLayerGroup.addTo(map);
     map.doubleClickZoom.disable();
     map.on('mousemove zoom', (e) => updateMapInfo(map, e.latlng));
 
@@ -13,6 +17,13 @@ function initActions(map) {
         map.openPopup(popCentroid).setView(CENTRE_OF_ENGLAND, DEFAULT_ZOOM);
         updateMapInfo(map, map.getCenter());
     };
+    document.getElementById("area-table").onclick = async (e) => {
+        let areaId = e.target.parentElement.firstChild.textContent;
+        let areaLayer = await getAreaLayer(areaId);
+        activeLayerGroup.clearLayers();
+        map.fitBounds(areaLayer.getBounds());
+        activeLayerGroup.addLayer(areaLayer);
+    }
 };
 
 function initCurrentLocation(mymap) {
@@ -32,16 +43,5 @@ function initCurrentLocation(mymap) {
     });
     mymap.on('locationerror', (e) => alert("location not found"));
 };
-
-// export function initAreaButtons() {
-//     document.querySelectorAll("button.area_number").forEach(el =>
-//         el.onclick = function (e) {
-//             e.stopPropagation();
-//             let areaNumber = e.target.innerText;
-//             if (areaLayers[areaNumber]) {
-//                 showArea(map, activeLayerGroup, areaLayers[areaNumber]);
-//             }
-//         });
-// }
 
 export { initActions }
