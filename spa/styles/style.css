@@ -39,7 +39,7 @@ body {
 #area-table th,
 #area-table td {
     padding: 0.2rem;
-    text-align: left;
+    text-align: right;
     border-bottom: 1px solid black;
 }
 

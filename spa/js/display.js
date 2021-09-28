@@ -29,10 +29,10 @@ export function updateMapInfo(map, position = map.getCenter()) {
 export function createTable(areaData) {
     let table = document.querySelector("#area-table tbody");
     areaData.forEach((area, index) => {
-        let dueCount = document.createTextNode(area.due.count);
-        let dueLength = document.createTextNode(area.due.length);
-        let overdueCount = document.createTextNode(area.overdue.count);
-        let overdueLength = document.createTextNode(area.overdue.length);
+        let dueCount = document.createTextNode(area.due.count || "");
+        let dueLength = document.createTextNode(area.due.length_km || "");
+        let overdueCount = document.createTextNode(area.overdue.count || "");
+        let overdueLength = document.createTextNode(area.overdue.length_km || "");
 
         let row = document.createElement("tr");
         let col = document.createElement("td");

@@ -89,29 +89,43 @@ def length():
 def area_list():
     if request.args.get('q') == "table":
         # return combined table data
-        return jsonify([{"id": 1,
-                         "due": {
-                             "count": 123,
-                             "length": 345.456
-                             },
-                         "overdue": {
-                             "count": 345,
-                             "length": 567.789
-                         }},
-                        {"id": 2,
-                         "due": {
-                             "count": 12,
-                             "length": 34.46
-                             },
-                         "overdue": {
-                             "count": 35,
-                             "length": 56.789
-                         }}
-                         ])
+        due = query({"next_pi": "due"}, opt="area set")
+        overdue = query({"next_pi": "overdue"}, opt="area set")
+
+        due_list = [{col: rows[col] for col in rows.keys()} for rows in due]
+        overdue_list = [{col: rows[col] for col in rows.keys()} for rows in overdue]
+        areas = merge_area_lists(due_list, overdue_list)
+        return jsonify(areas)
     else:
         output = query(request.args, opt="area set")
         areas = [{col: rows[col] for col in rows.keys()} for rows in output]
     return jsonify(areas)
+
+
+def merge_area_lists(a: list, b: list) -> list:
+    index_b = 0
+    merged = []
+    for obj in a:
+        if obj["area"] == b[index_b]["area"]:
+            del b[index_b]["area"]
+            merged.append(
+                {"id": obj.pop('area'),
+                 "due": obj,
+                 "overdue": b[index_b]})
+            index_b += 1
+        else:
+            if obj["area"] < b[index_b]["area"]:
+                merged.append(
+                    {"id": obj.pop('area'),
+                     "due": obj,
+                     "overdue": {}})
+            else:
+                merged.append(
+                    {"id": b[index_b].pop("area"),
+                     "due": {},
+                     "overdue": b[index_b]})
+                index_b += 1
+    return merged
 
 
 if __name__ == "__main__":

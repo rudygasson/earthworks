@@ -110,7 +110,6 @@ def query(args, **kwargs):
                 sql_filter += column + "='" + str(entry) + "'"
             sql += sql_filter
         sql += " GROUP BY " + groupby if groupby else ""
-        print(sql)
         c.execute(sql + " LIMIT 1000;")
         output = c.fetchall()
         c.close()
