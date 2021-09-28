@@ -31,11 +31,24 @@ body {
     border-collapse: collapse;
 }
 
+#area-table caption {
+    font-size: larger;
+    padding: 0.5rem;
+}
+
 #area-table th,
 #area-table td {
+    padding: 0.2rem;
     text-align: left;
-    width: 30%;
     border-bottom: 1px solid black;
+}
+
+#area-table tbody tr:nth-child(even) {
+    background-color: #e0e0e0;
+}
+
+#area-table tbody tr:hover {
+    background-color: white;
 }
 
 #area_selection {

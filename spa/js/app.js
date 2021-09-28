@@ -12,15 +12,16 @@ document.onreadystatechange = async function () {
         let inspectionMap = initMap();
         updateMapInfo(inspectionMap);
         initActions(inspectionMap);
+        console.log(areas);
         createTable(areas);
     }
 }
 
 async function getAreaCollection() {
-    let areas_due = await fetch(base_url + "/areas?next_pi=due")
+    return fetch(base_url + "/areas?q=table")
         .then(res => res.json());
-    return areas_due.areas;
 }
+
 
 async function getGeoData(url,
     conditions = {

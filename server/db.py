@@ -18,7 +18,7 @@ sql_options = {
     "all": "*",
     "area set": '''area_dbfo AS area,
                 count(area_dbfo) AS count,
-                round(sum(earthwork_length_m)/1000, 2) AS "length(km)"''',
+                round(sum(earthwork_length_m)/1000, 3) AS "length_km"''',
     "count": "count(*)",
     "length": "sum(earthwork_length_m)",
     "min": min_fields

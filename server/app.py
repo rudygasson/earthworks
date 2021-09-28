@@ -82,14 +82,36 @@ def count():
 @app.route('/earthworks/length')
 def length():
     rows = query(request.args, opt="length")
-    return jsonify({"length_km": round(rows[0][0] / 1000, 2)})
+    return jsonify({"length": round(rows[0][0] / 1000, 2)})
 
 
 @app.route('/earthworks/areas')
 def area_list():
-    output = query(request.args, opt="area set")
-    areas = [{col: rows[col] for col in rows.keys()} for rows in output]
-    return jsonify({"areas": areas})
+    if request.args.get('q') == "table":
+        # return combined table data
+        return jsonify([{"id": 1,
+                         "due": {
+                             "count": 123,
+                             "length": 345.456
+                             },
+                         "overdue": {
+                             "count": 345,
+                             "length": 567.789
+                         }},
+                        {"id": 2,
+                         "due": {
+                             "count": 12,
+                             "length": 34.46
+                             },
+                         "overdue": {
+                             "count": 35,
+                             "length": 56.789
+                         }}
+                         ])
+    else:
+        output = query(request.args, opt="area set")
+        areas = [{col: rows[col] for col in rows.keys()} for rows in output]
+    return jsonify(areas)
 
 
 if __name__ == "__main__":

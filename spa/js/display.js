@@ -26,20 +26,39 @@ export function updateMapInfo(map, position = map.getCenter()) {
         .innerText = map.getZoom();
 }
 
-export function createTable(areas) {
+export function createTable(areaData) {
     let table = document.querySelector("#area-table tbody");
-    areas.forEach(area => {
+    areaData.forEach((area, index) => {
+        let dueCount = document.createTextNode(area.due.count);
+        let dueLength = document.createTextNode(area.due.length);
+        let overdueCount = document.createTextNode(area.overdue.count);
+        let overdueLength = document.createTextNode(area.overdue.length);
+
         let row = document.createElement("tr");
         let col = document.createElement("td");
-        col.appendChild(document.createTextNode(area.area));
+
+        col.appendChild(document.createTextNode(area.id));
+        row.appendChild(col);
+
+        col = document.createElement("td");
+        col.appendChild(dueCount);
+        row.appendChild(col);
+
+        col = document.createElement("td");
+        col.appendChild(dueLength);
+        row.appendChild(col);
+
+        col = document.createElement("td");
+        col.appendChild(overdueCount);
+        row.appendChild(col);
+
+        col = document.createElement("td");
+        col.appendChild(overdueLength);
+        row.appendChild(col);
+
         row.addEventListener("click",
             e => showArea(e.target.parentElement.firstChild.textContent),
             false);
-        row.appendChild(col);
-        col = document.createElement("td");
-        let dueCount = document.createTextNode(area.count);
-        col.appendChild(dueCount);
-        row.appendChild(col);
         table.appendChild(row);
     });
 }
