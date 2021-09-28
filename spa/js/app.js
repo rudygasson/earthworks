@@ -1,32 +1,37 @@
-import { allConditions } from "./filter";
-import { initMap, createAllAreaLayers, updateMapInfo } from "./display";
+import { initMap, updateMapInfo, createTable } from "./display";
 import { initActions } from "./actions";
 import { assert } from "./utils";
 
-const GEOJSON_URL = new URL('http://localhost:5000/earthworks');
+const base_url = new URL("http://localhost:5000/earthworks");
 const activeLayerGroup = L.layerGroup([]);
 
 document.onreadystatechange = async function () {
     if (document.readyState === 'complete') {
-        let geoData = await getGeoData(GEOJSON_URL);
-        assert(geoData !== {}, geoData);
+        let areas = await getAreaCollection();
+        assert(areas.length > 0, areas, "No area data available");
         let inspectionMap = initMap();
-        let areaLayers = createAllAreaLayers(geoData, [10, 13]);
-        updateMapInfo(inspectionMap, inspectionMap.getCenter());
-        activeLayerGroup.addTo(inspectionMap);
-        initActions(inspectionMap, activeLayerGroup, areaLayers);
+        updateMapInfo(inspectionMap);
+        initActions(inspectionMap);
+        createTable(areas);
     }
 }
 
-async function getGeoData(geoJsonUrl, conditions = {}) {
-    assert(typeof geoJsonUrl === "object", geoJsonUrl);
-    assert(geoJsonUrl.pathname === "/earthworks", geoJsonUrl);
-    return fetch(geoJsonUrl)
-        .then(res => res.json())
-        .then(data => {
-            assert(data.features !== undefined && data.features !== [], data);
-            let filtered = data.features.filter(allConditions(conditions));
-            document.getElementsByClassName('due')[0].innerText = filtered.length;
-            return filtered;
-        });
+async function getAreaCollection() {
+    let areas_due = await fetch(base_url + "/areas?next_pi=due")
+        .then(res => res.json());
+    return areas_due.areas;
+}
+
+async function getGeoData(url,
+    conditions = {
+        "area": 10,
+        "road": "M6",
+        "next_pi": "overdue"
+    }) {
+    assert(typeof url === "object", url);
+    assert(url.pathname === "/earthworks", url);
+    Object.keys(conditions).forEach(key => {
+        url.searchParams.set(key, conditions[key])
+    });
+    return fetch(url).then(res => res.json())
 }

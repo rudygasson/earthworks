@@ -1,11 +1,9 @@
 import { showArea, updateMapInfo, CENTRE_OF_ENGLAND, DEFAULT_ZOOM } from "./display";
 import { latLngToENString } from "./grid";
 
-function initActions(map, activeLayerGroup, areaLayers) {
+function initActions(map) {
     map.doubleClickZoom.disable();
-    map.on('mousemove', (e) => updateMapInfo(map, e.latlng));
-    document.getElementById("area_selection")
-        .addEventListener("change", (e) => showArea(map, activeLayerGroup, areaLayers[e.target.value]));
+    map.on('mousemove zoom', (e) => updateMapInfo(map, e.latlng));
 
     const popCentroid = L.popup()
         .setLatLng(CENTRE_OF_ENGLAND)
@@ -34,5 +32,16 @@ function initCurrentLocation(mymap) {
     });
     mymap.on('locationerror', (e) => alert("location not found"));
 };
+
+// export function initAreaButtons() {
+//     document.querySelectorAll("button.area_number").forEach(el =>
+//         el.onclick = function (e) {
+//             e.stopPropagation();
+//             let areaNumber = e.target.innerText;
+//             if (areaLayers[areaNumber]) {
+//                 showArea(map, activeLayerGroup, areaLayers[areaNumber]);
+//             }
+//         });
+// }
 
 export { initActions }

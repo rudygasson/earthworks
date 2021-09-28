@@ -1,4 +1,4 @@
-* { 
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -23,16 +23,16 @@ body {
     z-index: 900;
     padding: 1rem;
     background-color: #f6f6f6d6;
-    border-radius: 6px;   
+    border-radius: 6px;
 }
 
-.area-table {
+#area-table {
     width: 100%;
     border-collapse: collapse;
-}   
+}
 
-.area-table th,
-.area-table td {
+#area-table th,
+#area-table td {
     text-align: left;
     width: 30%;
     border-bottom: 1px solid black;

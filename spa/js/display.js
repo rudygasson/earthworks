@@ -17,14 +17,31 @@ export function initMap() {
     return mymap;
 };
 
-export function updateMapInfo(map, position) {
-    assert(position.lat !== undefined && position.lng !== undefined, position)
+export function updateMapInfo(map, position = map.getCenter()) {
     document.getElementById("mouse-location")
         .innerText = latLngToENString(position);
     document.getElementById("map-centre")
         .innerText = latLngToENString(map.getCenter());
     document.getElementById("zoom-level")
         .innerText = map.getZoom();
+}
+
+export function createTable(areas) {
+    let table = document.querySelector("#area-table tbody");
+    areas.forEach(area => {
+        let row = document.createElement("tr");
+        let col = document.createElement("td");
+        col.appendChild(document.createTextNode(area.area));
+        row.addEventListener("click",
+            e => showArea(e.target.parentElement.firstChild.textContent),
+            false);
+        row.appendChild(col);
+        col = document.createElement("td");
+        let dueCount = document.createTextNode(area.count);
+        col.appendChild(dueCount);
+        row.appendChild(col);
+        table.appendChild(row);
+    });
 }
 
 function description(layer) {
@@ -36,23 +53,28 @@ function description(layer) {
 
 export function createAllAreaLayers(data, areaNumbers) {
     let areaLayers = {};
-    areaNumbers.map(area => areaLayers[area] = createAreaLayer(area));
+    areaNumbers.map(area => areaLayers[area] = createAreaLayer(area, data));
     return areaLayers;
-
-    function createAreaLayer(area) {
-        assert(typeof area === "number", area);
-        return L.geoJson(data,
-            {
-                filter: allConditions({ area_dbfo: (x) => x === area }),
-                coordsToLatLng: ukToWorld
-            });
-    }
 }
 
-export function showArea(map, activeLayerGroup, areaLayer) {
-    activeLayerGroup.clearLayers();
-    activeLayerGroup.addLayer(areaLayer);
-    return map.fitBounds(areaLayer.getBounds());
+function createAreaLayer(area, data) {
+    assert(typeof area === "number", area);
+    return L.geoJson(data,
+        {
+            filter: allConditions({ area_dbfo: (x) => x === area }),
+            coordsToLatLng: ukToWorld
+        });
 }
+
+export function showArea(areaNumber) {
+    console.warn(areaNumber);
+}
+
+// export function showArea(map, activeLayerGroup, areaLayer) {
+//     console.log(map);
+//     activeLayerGroup.clearLayers();
+//     activeLayerGroup.addLayer(areaLayer);
+//     return map.fitBounds(areaLayer.getBounds());
+// }
 
 export { CENTRE_OF_ENGLAND, DEFAULT_ZOOM }

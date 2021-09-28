@@ -23,18 +23,18 @@ def page_not_found(e):
 def single(number):
     output = query({"id": number}, opt="all")
 
-    if type(output) is not list or len(output) == 0:
+    if not isinstance(output, list) or len(output) == 0:
         abort(404)
 
     row = output[0]
     props = {col: row[col] for col in row.keys()}
 
     feature = Feature(
-            geometry=LineString([
-                (props['start_easting'], props['start_northing']),
-                (props['end_easting'], props['end_northing'])
-                ]), properties=props
-            )
+        geometry=LineString([
+            (props['start_easting'], props['start_northing']),
+            (props['end_easting'], props['end_northing'])
+        ]), properties=props
+    )
 
     return jsonify(feature)
 
@@ -43,7 +43,7 @@ def single(number):
 def search():
     output = query(request.args, opt="min")
 
-    if type(output) is not list:
+    if not isinstance(output, list):
         abort(404)
 
     # Create list of property dictionaries
@@ -82,7 +82,7 @@ def count():
 @app.route('/earthworks/length')
 def length():
     rows = query(request.args, opt="length")
-    return jsonify({"length_km": round(rows[0][0]/1000, 2)})
+    return jsonify({"length_km": round(rows[0][0] / 1000, 2)})
 
 
 @app.route('/earthworks/areas')
