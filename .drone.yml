@@ -1,0 +1,11 @@
+kind: pipeline
+type: docker
+name: backend
+
+steps:
+- name: test server
+  image: python
+  commands:
+  - cd server
+  - pip install -r requirements.txt
+  - pytest -vv
