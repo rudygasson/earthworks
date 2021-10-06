@@ -1,5 +1,6 @@
 import { ukToWorld } from "./grid";
 import { assert } from "./utils";
+import { merge } from '@mapbox/geojson-merge';
 
 const url = new URL("http://localhost:5000/earthworks");
 const areaLayers = {}
@@ -13,8 +14,9 @@ export async function getAreaCollection() {
 export async function getAreaLayer(area) {
     if (areaLayers[area]) return areaLayers[area];
     let dueData = await getGeoData({next_pi: "due", area});
-    // let allData = await dueData.concat(await getGeoData({area, next_pi: "overdue"}));
-    areaLayers[area] = L.geoJson(dueData, { coordsToLatLng: ukToWorld });
+    let overdueData = await getGeoData({area, next_pi: "overdue"});
+    let allData = merge([...dueData.features, ...overdueData.features]);
+    areaLayers[area] = L.geoJson(allData, { coordsToLatLng: ukToWorld });
     return areaLayers[area];
 }
 
