@@ -19,6 +19,7 @@ function initActions(map) {
     };
     document.getElementById("area-table").onclick = async (e) => {
         let areaId = e.target.parentElement.firstChild.textContent;
+        if (!parseInt(areaId)) return;
         let areaLayer = await getAreaLayer(areaId);
         activeLayerGroup.clearLayers();
         map.fitBounds(areaLayer.getBounds());
