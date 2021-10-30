@@ -8,7 +8,6 @@
     "snowpack": "^3.5.7"
   },
   "dependencies": {
-    "@mapbox/geojson-merge": "^1.1.1",
     "leaflet": "^1.7.1",
     "proj4": "^2.7.4"
   }
