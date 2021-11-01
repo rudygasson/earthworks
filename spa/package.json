@@ -1,11 +1,12 @@
 {
   "version": "0.0.1",
   "scripts": {
-    "dev": "snowpack dev",
-    "build": "snowpack build"
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "devDependencies": {
-    "snowpack": "^3.5.7"
+    "vite": "^2.6.4"
   },
   "dependencies": {
     "leaflet": "^1.7.1",

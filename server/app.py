@@ -12,7 +12,7 @@ Compress(app)
 
 @app.route('/')
 def index():
-    return redirect('/earthworks?road=M6')
+    return redirect('static/index.html')
 
 
 @app.errorhandler(404)
