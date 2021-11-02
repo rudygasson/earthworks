@@ -10,23 +10,32 @@ body {
     font-size: medium;
 }
 
+.main {
+    display: grid;
+    grid-template-columns: auto 18rem;
+}
+
 #mapdiv {
     height: 100vh;
 }
 
 #inspection-info {
-    position: absolute;
-    top: 1rem;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    top: 0rem;
     right: 1rem;
-    width: 33vw;
+    width: 18rem;
     min-width: 18rem;
     z-index: 900;
-    padding: 1rem;
+    padding: 0 1rem 0 1rem;
     background-color: #f6f6f6d6;
-    border-radius: 6px;
 }
 
 #area-table {
+    height: 100%;
     width: 100%;
     border-collapse: collapse;
 }
@@ -38,9 +47,17 @@ body {
 
 #area-table th,
 #area-table td {
-    padding: 0.2rem;
+    padding: 0.1rem 0.2rem;
     text-align: right;
     border-bottom: 1px solid black;
+}
+
+.in-year {
+    background-color: #ffa20062;
+}
+
+.backlog {
+    background-color: #ff00003f;
 }
 
 #area-table tbody tr:nth-child(even) {
@@ -58,15 +75,13 @@ body {
 }
 
 #map-info {
-    min-width: 15rem;
     z-index: 900;
-    position: absolute;
     bottom: 1rem;
     left: 1rem;
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
     background-color: #f6f6f6d6;
     border-radius: 6px;
-    padding: 0.3rem
+    padding: 0.5rem 1rem .8rem 1rem;
 }
 
 #map-controls {
@@ -77,7 +92,7 @@ body {
     flex: 1;
     background-color: lightgray;
     padding: .5rem;
-    margin: 0 .1rem;
+    margin-top: 0.5rem;
     font-size: medium;
     border-radius: 5px;
     border-width: 2px;

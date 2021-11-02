@@ -10,51 +10,51 @@
     
     
     
-  <script type="module" crossorigin src="assets/index.7da8d152.js"></script>
+  <script type="module" crossorigin src="assets/index.d20d9bf5.js"></script>
   <link rel="modulepreload" href="assets/vendor.fb5514cc.js">
-  <link rel="stylesheet" href="assets/index.e7b8a62d.css">
+  <link rel="stylesheet" href="assets/index.17c1d1bd.css">
 </head>
 
 <body>
     <div class="main">
         <div id="mapdiv">
         </div>
-        <div id="map-info">
-            <div id="map-controls">
-                <button id='btnLocate' class='map-info__button'>Locate</button>
-                <button id='btnCentroid' class='map-info__button'>Reset Zoom</button>
-            </div>
-            <table class="measures">
-                <tr>
-                    <td>Zoom level:</td>
-                    <td id='zoom-level'></td>
-                </tr>
-                <tr>
-                    <td>Map centre:</td>
-                    <td id='map-centre'></td>
-                </tr>
-                <tr>
-                    <td>Mouse:</td>
-                    <td id='mouse-location'></td>
-                </tr>
-            </table>
-        </div>
         <div id="inspection-info">
-
             <table id="area-table">
-                <caption>Inspections requested</caption>
+                <caption>Principal Inspection Requirement</caption>
                 <thead>
                     <tr>
+                        <th scope="col"></th>
+                        <th class="in-year" style="text-align: center;" colspan="2">in-year</th>
+                        <th class="backlog" style="text-align: center;" colspan="2">backlog</th>
+                    </tr>
+                    <tr>
                         <th scope="col">Area</th>
-                        <th scope="col">This year</th>
-                        <th scope="col">km</th>
-                        <th scope="col">overdue</th>
-                        <th scope="col">km</th>
+                        <th class="in-year" scope="col">count</th>
+                        <th class="in-year" scope="col">km</th>
+                        <th class="backlog" scope="col">count</th>
+                        <th class="backlog" scope="col">km</th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
+            <div id="map-info">
+                <table class="measures">
+                    <tr>
+                        <td>Zoom:</td>
+                        <td id='zoom-level'></td>
+                    </tr>
+                    <tr>
+                        <td>Position:</td>
+                        <td id='mouse-location'></td>
+                    </tr>
+                </table>
+                <div id="map-controls">
+                    <!-- <button id='btnLocate' class='map-info__button'>Locate</button> -->
+                    <button id='btnCentroid' class='map-info__button'>Reset Zoom</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>

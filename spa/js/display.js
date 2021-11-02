@@ -4,7 +4,7 @@ import { getDetails } from "./connection";
 
 const OSM_TILE_LAYER = "http://{s}.tile.osm.org/{z}/{x}/{y}.png";
 const OSM_ATTRIBUTION = `© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`;
-const ATTRIBUTION = ` | Adam Carins & <a href="https://rudygasson.de">Rudy Gasson</a>`;
+const ATTRIBUTION = ` | Adam Carins & <a href="https://github.com/rudygasson" target="_blank">Rudy Gasson</a>`;
 const CENTRE_OF_ENGLAND = { lat: 52.561928, lng: -1.464854 };
 const DEFAULT_ZOOM = 7;
 const DETAIL_ZOOM = 13;
@@ -25,10 +25,8 @@ export function initMap() {
 export function updateMapInfo(map, position = map.getCenter()) {
     document.getElementById("mouse-location")
         .innerText = latLngToENString(position);
-    document.getElementById("map-centre")
-        .innerText = latLngToENString(map.getCenter());
     document.getElementById("zoom-level")
-        .innerText = map.getZoom();
+        .innerText = map.getZoom().toFixed(2);
 }
 
 export function createTable(areaData) {
@@ -46,18 +44,22 @@ export function createTable(areaData) {
         row.appendChild(col);
 
         col = document.createElement("td");
+        col.classList.add("in-year");
         col.appendChild(dueCount);
         row.appendChild(col);
 
         col = document.createElement("td");
+        col.classList.add("in-year");
         col.appendChild(dueLength);
         row.appendChild(col);
 
         col = document.createElement("td");
+        col.classList.add("backlog");
         col.appendChild(overdueCount);
         row.appendChild(col);
 
         col = document.createElement("td");
+        col.classList.add("backlog");
         col.appendChild(overdueLength);
         row.appendChild(col);
 
