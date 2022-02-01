@@ -4,6 +4,7 @@ dist
 dist-ssr
 *.local
 data/
+.backups/
 lib/
 build/
 .vscode/
